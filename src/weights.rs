@@ -29,7 +29,7 @@
 #![allow(unused_imports)]
 #![allow(missing_docs)]
 
-use frame_support::{traits::Get, weights::{Weight, constants::RocksDbWeight}};
+use polkadot_sdk::frame_support::{traits::Get, weights::{Weight, constants::RocksDbWeight}};
 use core::marker::PhantomData;
 
 /// Weight functions needed for validator_set.
@@ -40,7 +40,7 @@ pub trait WeightInfo {
 
 /// Weights for validator_set using the Substrate node and recommended hardware.
 pub struct SubstrateWeight<T>(PhantomData<T>);
-impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
+impl<T: polkadot_sdk::frame_system::Config> WeightInfo for SubstrateWeight<T> {
 	/// Storage: ValidatorSet Validators (r:1 w:1)
 	/// Proof Skipped: ValidatorSet Validators (max_values: Some(1), max_size: None, mode: Measured)
 	fn add_validator() -> Weight {

@@ -18,32 +18,32 @@ mod mock;
 mod tests;
 pub mod weights;
 
-use frame_support::{
-	ensure,
-	pallet_prelude::*,
-	traits::{EstimateNextSessionRotation, Get, ValidatorSet, ValidatorSetWithIdentification},
-	DefaultNoBound,
-};
-use frame_system::pallet_prelude::*;
+use frame::traits::EstimateNextSessionRotation;
 use log;
 pub use pallet::*;
-use sp_runtime::traits::{Convert, Zero};
-use sp_staking::offence::{Offence, OffenceError, ReportOffence};
-use sp_std::prelude::*;
 pub use weights::*;
 
-pub const LOG_TARGET: &'static str = "runtime::validator-set";
+use frame::arithmetic::{Permill, Zero};
+use frame::prelude::*;
+use frame::traits::{Convert, ValidatorSet, ValidatorSetWithIdentification};
+use polkadot_sdk::polkadot_sdk_frame as frame;
+use polkadot_sdk::sp_staking::offence::{Offence, OffenceError, ReportOffence};
 
-#[frame_support::pallet()]
+pub const LOG_TARGET: &str = "runtime::validator-set";
+
+#[frame::pallet()]
 pub mod pallet {
 	use super::*;
 
 	/// Configure the pallet by specifying the parameters and types on which it
 	/// depends.
 	#[pallet::config]
-	pub trait Config: frame_system::Config + pallet_session::Config {
+	pub trait Config:
+		polkadot_sdk::frame_system::Config + polkadot_sdk::pallet_session::Config
+	{
 		/// The Event type.
-		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+		type RuntimeEvent: From<Event<Self>>
+			+ IsType<<Self as polkadot_sdk::frame_system::Config>::RuntimeEvent>;
 
 		/// Origin for adding or removing a validator.
 		type AddRemoveOrigin: EnsureOrigin<Self::RuntimeOrigin>;
@@ -220,29 +220,17 @@ impl<T: Config> pallet_session::SessionManager<T::ValidatorId> for Pallet<T> {
 	fn start_session(_start_index: u32) {}
 }
 
-impl<T: Config> pallet_session::historical::SessionManager<T::ValidatorId, T::ValidatorId> for Pallet<T> {
+impl<T: Config> pallet_session::historical::SessionManager<T::ValidatorId, T::ValidatorId>
+	for Pallet<T>
+{
 	fn new_session(new_index: u32) -> Option<Vec<(T::ValidatorId, T::ValidatorId)>> {
-		<Self as pallet_session::SessionManager<_>>::new_session(new_index).map(|validators| {
-				validators
-				.into_iter()
-				.map(|v| {
-					(v.clone(), v)
-				})
-				.collect()
-			}
-		)
+		<Self as pallet_session::SessionManager<_>>::new_session(new_index)
+			.map(|validators| validators.into_iter().map(|v| (v.clone(), v)).collect())
 	}
 
 	fn new_session_genesis(new_index: u32) -> Option<Vec<(T::ValidatorId, T::ValidatorId)>> {
-		<Self as pallet_session::SessionManager<_>>::new_session(new_index).map(|validators| {
-				validators
-				.into_iter()
-				.map(|v| {
-					(v.clone(), v)
-				})
-				.collect()
-			}
-		)
+		<Self as pallet_session::SessionManager<_>>::new_session(new_index)
+			.map(|validators| validators.into_iter().map(|v| (v.clone(), v)).collect())
 	}
 
 	fn end_session(end_index: u32) {
@@ -261,20 +249,20 @@ impl<T: Config> EstimateNextSessionRotation<BlockNumberFor<T>> for Pallet<T> {
 
 	fn estimate_current_session_progress(
 		_now: BlockNumberFor<T>,
-	) -> (Option<sp_runtime::Permill>, sp_weights::Weight) {
+	) -> (Option<Permill>, polkadot_sdk::sp_weights::Weight) {
 		(None, Zero::zero())
 	}
 
 	fn estimate_next_session_rotation(
 		_now: BlockNumberFor<T>,
-	) -> (Option<BlockNumberFor<T>>, sp_weights::Weight) {
+	) -> (Option<BlockNumberFor<T>>, polkadot_sdk::sp_weights::Weight) {
 		(None, Zero::zero())
 	}
 }
 
 // Implementation of Convert trait to satisfy trait bounds in session pallet.
 // Here it just returns the same ValidatorId.
-pub struct ValidatorOf<T>(sp_std::marker::PhantomData<T>);
+pub struct ValidatorOf<T>(core::marker::PhantomData<T>);
 
 impl<T: Config> Convert<T::ValidatorId, Option<T::ValidatorId>> for ValidatorOf<T> {
 	fn convert(account: T::ValidatorId) -> Option<T::ValidatorId> {
@@ -286,12 +274,12 @@ impl<T: Config> ValidatorSet<T::ValidatorId> for Pallet<T> {
 	type ValidatorId = T::ValidatorId;
 	type ValidatorIdOf = ValidatorOf<T>;
 
-	fn session_index() -> sp_staking::SessionIndex {
-		pallet_session::Pallet::<T>::current_index()
+	fn session_index() -> polkadot_sdk::sp_staking::SessionIndex {
+		polkadot_sdk::pallet_session::Pallet::<T>::current_index()
 	}
 
 	fn validators() -> Vec<T::ValidatorId> {
-		pallet_session::Pallet::<T>::validators()
+		polkadot_sdk::pallet_session::Pallet::<T>::validators()
 	}
 }
 
