@@ -13,6 +13,8 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+extern crate alloc;
+
 mod benchmarking;
 mod mock;
 mod tests;
@@ -23,6 +25,7 @@ use log;
 pub use pallet::*;
 pub use weights::*;
 
+use alloc::vec::Vec;
 use frame::arithmetic::{Permill, Zero};
 use frame::prelude::*;
 use frame::traits::{Convert, ValidatorSet, ValidatorSetWithIdentification};
