@@ -20,17 +20,16 @@ mod mock;
 mod tests;
 pub mod weights;
 
-use frame::traits::EstimateNextSessionRotation;
-use log;
 pub use pallet::*;
+use sp_staking::offence::{Offence, OffenceError, ReportOffence};
 pub use weights::*;
 
 use alloc::vec::Vec;
 use frame::arithmetic::{Permill, Zero};
 use frame::prelude::*;
-use frame::traits::{Convert, ValidatorSet, ValidatorSetWithIdentification};
-use polkadot_sdk::polkadot_sdk_frame as frame;
-use polkadot_sdk::sp_staking::offence::{Offence, OffenceError, ReportOffence};
+use frame::traits::{
+	Convert, EstimateNextSessionRotation, ValidatorSet, ValidatorSetWithIdentification,
+};
 
 pub const LOG_TARGET: &str = "runtime::validator-set";
 
@@ -41,12 +40,9 @@ pub mod pallet {
 	/// Configure the pallet by specifying the parameters and types on which it
 	/// depends.
 	#[pallet::config]
-	pub trait Config:
-		polkadot_sdk::frame_system::Config + polkadot_sdk::pallet_session::Config
-	{
+	pub trait Config: frame_system::Config + pallet_session::Config {
 		/// The Event type.
-		type RuntimeEvent: From<Event<Self>>
-			+ IsType<<Self as polkadot_sdk::frame_system::Config>::RuntimeEvent>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// Origin for adding or removing a validator.
 		type AddRemoveOrigin: EnsureOrigin<Self::RuntimeOrigin>;
@@ -250,15 +246,13 @@ impl<T: Config> EstimateNextSessionRotation<BlockNumberFor<T>> for Pallet<T> {
 		Zero::zero()
 	}
 
-	fn estimate_current_session_progress(
-		_now: BlockNumberFor<T>,
-	) -> (Option<Permill>, polkadot_sdk::sp_weights::Weight) {
+	fn estimate_current_session_progress(_now: BlockNumberFor<T>) -> (Option<Permill>, Weight) {
 		(None, Zero::zero())
 	}
 
 	fn estimate_next_session_rotation(
 		_now: BlockNumberFor<T>,
-	) -> (Option<BlockNumberFor<T>>, polkadot_sdk::sp_weights::Weight) {
+	) -> (Option<BlockNumberFor<T>>, Weight) {
 		(None, Zero::zero())
 	}
 }
@@ -277,12 +271,12 @@ impl<T: Config> ValidatorSet<T::ValidatorId> for Pallet<T> {
 	type ValidatorId = T::ValidatorId;
 	type ValidatorIdOf = ValidatorOf<T>;
 
-	fn session_index() -> polkadot_sdk::sp_staking::SessionIndex {
-		polkadot_sdk::pallet_session::Pallet::<T>::current_index()
+	fn session_index() -> sp_staking::SessionIndex {
+		pallet_session::Pallet::<T>::current_index()
 	}
 
 	fn validators() -> Vec<T::ValidatorId> {
-		polkadot_sdk::pallet_session::Pallet::<T>::validators()
+		pallet_session::Pallet::<T>::validators()
 	}
 }
 
