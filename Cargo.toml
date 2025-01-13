@@ -12,7 +12,7 @@ git = "https://github.com/paritytech/polkadot-sdk"
 tag = "polkadot-stable2412"
 version = "0.1.0"
 default-features = false
-features = ["experimental", "runtime", "pallet-session"]
+features = ["runtime", "pallet-session"]
 
 [dependencies.pallet-session]
 git = "https://github.com/paritytech/polkadot-sdk"
