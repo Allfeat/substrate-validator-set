@@ -10,7 +10,7 @@ resolver = "2"
 [dependencies.frame]
 package = "polkadot-sdk-frame"
 git = "https://github.com/paritytech/polkadot-sdk"
-tag = "polkadot-stable2412"
+branch = "stable2412"
 version = "0.1.0"
 default-features = false
 features = ["experimental", "runtime"]
@@ -24,7 +24,7 @@ features = ['historical']
 
 [dependencies.sp-staking]
 git = "https://github.com/paritytech/polkadot-sdk"
-tag = "polkadot-stable2412"
+branch = "stable2412"
 version = "26.0.0"
 default-features = false
 
