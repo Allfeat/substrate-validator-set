@@ -7,24 +7,20 @@ license = 'Apache-2.0'
 repository = 'https://github.com/gautamdhameja/substrate-validator-set'
 resolver = "2"
 
-[dependencies.frame]
-package = "polkadot-sdk-frame"
-git = "https://github.com/paritytech/polkadot-sdk"
-branch = "stable2412"
-version = "0.8.0"
+[dependencies.frame-support]
+version = "39.0.0"
 default-features = false
-features = ["experimental", "runtime"]
+
+[dependencies.frame-system]
+version = "39.0.0"
+default-features = false
 
 [dependencies.pallet-session]
-git = "https://github.com/paritytech/polkadot-sdk"
-branch = "stable2412"
 version = "39.0.0"
 default-features = false
 features = ['historical']
 
 [dependencies.sp-staking]
-git = "https://github.com/paritytech/polkadot-sdk"
-branch = "stable2412"
 version = "37.0.0"
 default-features = false
 
@@ -54,9 +50,15 @@ std = [
   'scale-info/std',
   'serde/std',
   'log/std',
-  'frame/std',
+  'frame-support/std',
   'pallet-session/std',
+  'frame-system/std',
+  'sp-staking/std',
 ]
 default = ['std']
-runtime-benchmarks = ['frame/runtime-benchmarks']
-try-runtime = ['frame/try-runtime']
+runtime-benchmarks = ['frame-support/runtime-benchmarks']
+try-runtime = [
+  'frame-system/try-runtime',
+  'frame-support/try-runtime',
+  'pallet-session/try-runtime',
+]

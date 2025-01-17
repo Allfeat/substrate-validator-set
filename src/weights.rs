@@ -30,7 +30,10 @@
 #![allow(missing_docs)]
 
 
-use frame::weights_prelude::*;
+use constants::RocksDbWeight;
+use frame_support::weights::*;
+use frame_support::traits::Get;
+use core::marker::PhantomData;
 
 /// Weight functions needed for validator_set.
 pub trait WeightInfo {

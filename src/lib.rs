@@ -20,22 +20,28 @@ mod mock;
 mod tests;
 pub mod weights;
 
+use frame_support::sp_runtime::traits::Convert;
+use frame_support::sp_runtime::Permill;
+use frame_system::pallet_prelude::*;
 pub use pallet::*;
 use sp_staking::offence::{Offence, OffenceError, ReportOffence};
 pub use weights::*;
 
 use alloc::vec::Vec;
-use frame::arithmetic::{Permill, Zero};
-use frame::prelude::*;
-use frame::traits::{
-	Convert, EstimateNextSessionRotation, ValidatorSet, ValidatorSetWithIdentification,
+use frame_support::pallet_prelude::*;
+use frame_support::traits::{
+	EstimateNextSessionRotation, ValidatorSet, ValidatorSetWithIdentification,
 };
 
 pub const LOG_TARGET: &str = "runtime::validator-set";
 
-#[frame::pallet()]
+#[frame_support::pallet]
 pub mod pallet {
 	use super::*;
+	use frame_support::{
+		traits::{BuildGenesisConfig, EnsureOrigin, Hooks, IsType},
+		DefaultNoBound,
+	};
 
 	/// Configure the pallet by specifying the parameters and types on which it
 	/// depends.
